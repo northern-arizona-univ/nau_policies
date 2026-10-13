@@ -1,0 +1,8 @@
+# Original HTML and PDF/Word files from each snapshot (large, binary).
+# Kept locally; zip a snapshot folder and attach it to a GitHub Release if you want it online.
+archive/
+
+.venv/
+__pycache__/
+*.pyc
+.DS_Store

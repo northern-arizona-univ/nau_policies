@@ -1,0 +1,61 @@
+# Where the crawler looks, and how politely it behaves.
+# Edit this file (not the code) when NAU adds a manual or moves something.
+
+user_agent: "nau-policies-archive/0.1 (twice-yearly snapshot of public NAU policy pages for a faculty reference tool)"
+delay_seconds: 1.0          # pause between requests to NAU servers
+timeout_seconds: 45
+
+library:
+  base: https://in.nau.edu/university-policy-library/
+  # The 11 manuals linked from the library home page. The crawler warns if the
+  # home page lists a manual that is not here.
+  manuals:
+    - academic-faculty-affairs
+    - campus-operations
+    - communications
+    - civil-rights-compliance
+    - financial-management
+    - freedom-of-expression
+    - general-administration
+    - human-resources
+    - information-technology
+    - research
+    - student-affairs
+  # Pages that list many separate policy documents rather than being one policy.
+  bundles:
+    - comptroller-policies
+    - travel-policies
+    - contracting-purchasing-policies
+  # Library pages that are navigation/process pages, not policies.
+  non_policy_slugs:
+    - by-subject
+    - by-responsible-office
+    - policy-development-and-administration
+    - the-policy-project
+    - faq
+    - provost
+    - feedback-form
+    - policies-under-review
+  by_subject: by-subject
+  open_for_comment: policy-development-and-administration
+
+academic_catalog:
+  base: https://www9.nau.edu/policies/
+  # pertainsTo filter values on the catalog search form
+  audiences:
+    1: graduate
+    2: personalized_learning
+    3: undergraduate
+
+documents:
+  extract_text: true
+  max_megabytes: 25
+  # Only download files hosted here; everything else is recorded as a link.
+  download_domains:
+    - in.nau.edu
+  # 'View the Policy' links that go to a web page on these hosts are fetched and their text kept.
+  page_domains:
+    - nau.edu
+  # Files never worth downloading (duplicates of other content).
+  skip_url_patterns:
+    - Complete-Comptroller-Policies\.pdf
