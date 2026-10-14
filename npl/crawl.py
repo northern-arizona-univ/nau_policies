@@ -324,7 +324,11 @@ def build_library_record(ctx: Ctx, rec: dict) -> None:
     inline_text = ""
     text_source = "page" if rec["kind"] == "full_text" else ("bundle index" if rec["kind"] == "bundle" else "page summary")
     docx_stems = {file_stem(d["url"]).lower() for d in rec["documents"] if file_ext(d["url"]) == "docx"}
+    child_urls = {c["url"] for c in rec.get("children", [])}
     for doc in rec["documents"]:
+        if doc["url"] in child_urls:
+            doc["note"] = "stored as a bundle item"
+            continue
         if file_ext(doc["url"]) == "pdf" and file_stem(doc["url"]).lower() in docx_stems and doc["role"] != "policy":
             doc["note"] = "same document as the .docx version; text taken from the .docx"
             continue
@@ -641,6 +645,11 @@ def run(root: Path, args) -> int:
     prev_path = root / "data" / "catalog.json"
     prev = json.loads(prev_path.read_text(encoding="utf-8")) if prev_path.exists() else {}
 
+    # A full run rewrites policies/ and documents/ from scratch (clear them before anything is written).
+    if full:
+        for sub in ("policies", "documents"):
+            shutil.rmtree(ctx.data / sub, ignore_errors=True)
+
     info: dict = {"aliases": [], "crawled": {}}
     if not args.no_library:
         log("University Policy Library…")
@@ -650,9 +659,6 @@ def run(root: Path, args) -> int:
         crawl_academic(ctx)
 
     # Write
-    if full:
-        for sub in ("policies", "documents"):
-            shutil.rmtree(ctx.data / sub, ignore_errors=True)
     for rid, rec in ctx.records.items():
         write_md(rec["path"], rec["front"], rec["body"])
     cur = {rid: catalog_row(rec, root) for rid, rec in ctx.records.items()}

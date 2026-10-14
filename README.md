@@ -65,6 +65,16 @@ Useful options: `--pilot` (Academic & Faculty Affairs + Academic Catalog only), 
 
 Partial runs update only what they touched and never mark anything as removed; only a full run detects removals.
 
+## The Claude skill
+
+```bash
+python3 -m npl skill        # builds skill/nau-policies/ and skill/nau-policies.zip from data/
+```
+
+Upload `skill/nau-policies.zip` in Claude under **Customize → Skills** (code execution must be on). On Team/Enterprise plans the skill can then be shared or published to the organization from the same page. After each new snapshot, rebuild the zip and upload it again so faculty get the new data. The instructions Claude follows live in `npl/skill_template.md`; the snapshot date and counts are filled in at build time.
+
+`python3 -m npl rebuild-documents --label <label>` re-creates `data/documents/` from `archive/<label>/` without going online (useful after improving text extraction).
+
 ## Versioning
 
 * **Official version**: `effective_date`, `last_revised` and `history` as published.

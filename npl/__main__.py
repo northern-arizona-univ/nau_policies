@@ -20,12 +20,22 @@ def main(argv=None) -> int:
     c.add_argument("--academic-limit", type=int, metavar="N", help="only the first N academic policies")
     c.add_argument("--no-documents", action="store_true", help="do not download PDFs/Word files")
     c.add_argument("--delay", type=float, help="seconds between requests (default from sources.yaml)")
+    rb = sub.add_parser("rebuild-documents", help="re-create data/documents/ text from archive/<label>/ (offline)")
+    rb.add_argument("--label", required=True)
+    sk = sub.add_parser("skill", help="build the Claude skill folder and zip from data/")
+    sk.add_argument("--out", default="skill", help="output folder (default: skill/)")
     args = p.parse_args(argv)
 
     root = Path(__file__).resolve().parent.parent
     if args.cmd == "crawl":
         from .crawl import run
         return run(root, args)
+    if args.cmd == "rebuild-documents":
+        from .rebuild import rebuild_documents
+        return rebuild_documents(root, args.label)
+    if args.cmd == "skill":
+        from .skill import build_skill
+        return build_skill(root, Path(args.out))
     return 1
 
 
