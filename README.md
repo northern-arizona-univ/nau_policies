@@ -67,13 +67,46 @@ Partial runs update only what they touched and never mark anything as removed; o
 
 ## The Claude skill
 
+The skill (`nau-policies`) packages the current snapshot so Claude can answer policy questions from it: it searches `index.md` and `aliases.csv`, reads the matching policy files, and answers with the policy title, section, dates, official link and snapshot date. Its instructions live in `npl/skill_template.md`; the snapshot label, capture date and record counts are filled in when you build it.
+
+### Build
+
 ```bash
-python3 -m npl skill        # builds skill/nau-policies/ and skill/nau-policies.zip from data/
+cd ~/Developer/nau_policies
+source .venv/bin/activate
+python3 -m npl skill
 ```
 
-Upload `skill/nau-policies.zip` in Claude under **Customize → Skills** (code execution must be on). On Team/Enterprise plans the skill can then be shared or published to the organization from the same page. After each new snapshot, rebuild the zip and upload it again so faculty get the new data. The instructions Claude follows live in `npl/skill_template.md`; the snapshot date and counts are filled in at build time.
+This writes `skill/nau-policies/` (`SKILL.md` + `references/` with the index, aliases, catalog, policies, documents and process pages) and `skill/nau-policies.zip`, and prints the file count, zip size and snapshot label. `skill/` is in `.gitignore` because it is generated from `data/`. Rebuild it whenever `data/` changes.
 
-`python3 -m npl rebuild-documents --label <label>` re-creates `data/documents/` from `archive/<label>/` without going online (useful after improving text extraction).
+Optional check that the zip has the layout Claude expects (every entry starts with `nau-policies/`):
+
+```bash
+unzip -l skill/nau-policies.zip | head
+```
+
+### Install
+
+1. In Claude (web or desktop), open **Customize → Skills**. Code execution must be enabled; skills are available on Pro, Max, Team and Enterprise plans.
+2. Upload `skill/nau-policies.zip` and turn the skill on.
+3. Test it with a question it should handle, e.g. *"Under NAU policy, how long does an undergraduate have to finish an Incomplete?"* or *"Do I have to honor an athletic excuse a student gives me two days before the trip?"* The answer should name the policy and link to the official page.
+4. To share with colleagues (Team/Enterprise), open the skill under **Customize → Skills** and use **Share** or **Publish to org**.
+
+For Claude Code, copy the folder instead: `cp -r skill/nau-policies ~/.claude/skills/`.
+
+### Update after a new snapshot
+
+```bash
+python3 -m npl crawl --label 2027-spring
+git add -A && git commit -m "Snapshot 2027-spring" && git tag snapshot-2027-spring
+python3 -m npl skill
+```
+
+Then upload the new `skill/nau-policies.zip` in **Customize → Skills**, replacing the previous version, so everyone using it gets the new data. To change how the skill behaves (wording, the quick-reference table of common faculty questions), edit `npl/skill_template.md` and rebuild.
+
+### Rebuilding document text offline
+
+`python3 -m npl rebuild-documents --label <label>` re-creates any missing files in `data/documents/` from `archive/<label>/` without going online (useful after improving text extraction).
 
 ## Versioning
 
