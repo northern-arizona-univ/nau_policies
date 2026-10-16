@@ -67,7 +67,9 @@ Partial runs update only what they touched and never mark anything as removed; o
 
 ## The Claude skill
 
-The skill (`nau-policies`) packages the current snapshot so Claude can answer policy questions from it: it searches `index.md` and `aliases.csv`, reads the matching policy files, and answers with the policy title, section, dates, official link and snapshot date. Its instructions live in `npl/skill_template.md`; the snapshot label, capture date and record counts are filled in when you build it.
+The skill (`nau-policies`) packages the current snapshot so Claude can answer policy questions from it: it ranks policies with `scripts/search.py`, prints the matching ones with `scripts/show.py`, and answers with the policy title, section, dates, official link and snapshot date. Its instructions live in `npl/skill_template.md` and its two scripts in `npl/skill_scripts/` (standard-library Python only); the snapshot label, capture date and record counts are filled in when you build it.
+
+Claude's skill uploader accepts at most **200 files**, so the package does not mirror `data/` file-for-file: policies are combined into one Markdown file per manual (`references/policies/<manual>.md`) and supporting documents likewise (`references/documents/<manual>.md`), each policy wrapped in `<!-- POLICY id=… -->` markers that the scripts read. The whole skill is about 32 files. `data/` itself stays one file per policy so Git diffs between snapshots remain readable. The build stops with a warning if the package ever exceeds 200 files.
 
 ### Build
 
@@ -77,7 +79,7 @@ source .venv/bin/activate
 python3 -m npl skill
 ```
 
-This writes `skill/nau-policies/` (`SKILL.md` + `references/` with the index, aliases, catalog, policies, documents and process pages) and `skill/nau-policies.zip`, and prints the file count, zip size and snapshot label. `skill/` is in `.gitignore` because it is generated from `data/`. Rebuild it whenever `data/` changes.
+This writes `skill/nau-policies/` (`SKILL.md`, `scripts/`, and `references/` with the index, aliases, catalog, combined policy and document files, and process pages) and `skill/nau-policies.zip`, and prints the file count, zip size and snapshot label. `skill/` is in `.gitignore` because it is generated from `data/`. Rebuild it whenever `data/` changes.
 
 Optional check that the zip has the layout Claude expects (every entry starts with `nau-policies/`):
 
