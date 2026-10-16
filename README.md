@@ -87,10 +87,27 @@ unzip -l skill/nau-policies.zip | head
 
 ### Install
 
-1. In Claude (web or desktop), open **Customize → Skills**. Code execution must be enabled; skills are available on Pro, Max, Team and Enterprise plans.
-2. Upload `skill/nau-policies.zip` and turn the skill on.
-3. Test it with a question it should handle, e.g. *"Under NAU policy, how long does an undergraduate have to finish an Incomplete?"* or *"Do I have to honor an athletic excuse a student gives me two days before the trip?"* The answer should name the policy and link to the official page.
-4. To share with colleagues (Team/Enterprise), open the skill under **Customize → Skills** and use **Share** or **Publish to org**.
+Skills only work when code execution is turned on, because Claude reads the skill's files in its code-execution sandbox. Skills are available on Free, Pro, Max, Team and Enterprise plans.
+
+**1. Turn on code execution**
+
+- *Individual accounts (Free, Pro, Max):* in Claude (web or desktop) go to **Settings → Capabilities** and turn on **Code execution and file creation**.
+- *Team and Enterprise:* an organization owner must first allow it under **Organization settings → Plugins & skills → Policy**, where both **Code execution and file creation** (shown as *Cloud code execution and file creation* in some versions) and **Skills** must be on. On Team plans these are on by default. Each member then checks **Settings → Capabilities** as above. If the option to upload skills is missing, the owner has turned off member-created skills.
+
+**2. Upload the skill**
+
+1. Go to **Customize → Skills**.
+2. Click **+**, then **+ Create skill**, then **Upload a skill**.
+3. Choose `skill/nau-policies.zip`.
+4. Find **nau-policies** in the list and switch its toggle on. An uploaded skill is private to you until you share it.
+
+**3. Test it**
+
+Start a new chat and ask something the skill should handle, e.g. *"Under NAU policy, how long does an undergraduate have to finish an Incomplete?"* or *"Do I have to honor an athletic excuse a student gives me two days before the trip?"* The answer should name the policy, cite the section, give the official link and mention the snapshot date. If Claude answers without using the skill, check that code execution is on and the skill's toggle is enabled.
+
+**4. Share with colleagues (Team/Enterprise)**
+
+Open the skill under **Customize → Skills** and use **Share** (specific people) or **Publish to org** (everyone in the organization). Colleagues still need code execution turned on in their own **Settings → Capabilities**.
 
 For Claude Code, copy the folder instead: `cp -r skill/nau-policies ~/.claude/skills/`.
 
