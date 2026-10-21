@@ -7,5 +7,5 @@ __pycache__/
 *.pyc
 .DS_Store
 
-# Built skill package (regenerate with: python3 -m npl skill)
+# Built skill package (regenerate with: python3 -m naupolicy skill)
 skill/

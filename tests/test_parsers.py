@@ -1,7 +1,7 @@
 """Offline parser checks against saved page samples. Run: python3 -m tests.test_parsers"""
 from pathlib import Path
 
-from npl import academic, library
+from naupolicy import academic, library
 
 FX = Path(__file__).parent / "fixtures"
 BASE = "https://in.nau.edu/university-policy-library/"
@@ -78,7 +78,7 @@ def test_academic_detail():
 
 
 def test_pdf_cleanup():
-    from npl.util import reflow_pdf_text, strip_running_lines
+    from naupolicy.util import reflow_pdf_text, strip_running_lines
     pages = strip_running_lines(["Academic Affairs / X  Page 1 of 2\nWHO SHOULD KNOW THIS POLICY\n▪ All faculty",
                                  "Ac ademic Affairs / X  Page 2 of 2\nTITLE IX AND\nNAU REPORTING\nText that wraps\nonto a new line."])
     out = reflow_pdf_text("\n\n".join(pages))
